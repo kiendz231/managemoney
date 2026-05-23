@@ -1,0 +1,264 @@
+/* ================================================
+   Responsive Breakpoints
+   ================================================ */
+
+/* ---------- Tablet: 768px - 1024px ---------- */
+@media (max-width: 1024px) {
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    transform: translateX(-100%);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .topbar-menu-btn {
+    display: flex;
+  }
+
+  .dashboard-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dashboard-charts {
+    grid-template-columns: 1fr;
+  }
+
+  .budgets-overview {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .reports-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .desktop-fab {
+    display: none;
+  }
+
+  .topbar-actions .btn span {
+    display: none;
+  }
+}
+
+/* ---------- Mobile: < 768px ---------- */
+@media (max-width: 767px) {
+  :root {
+    --fs-xs: 0.68rem;
+    --fs-sm: 0.78rem;
+    --fs-base: 0.85rem;
+    --fs-md: 0.95rem;
+    --fs-lg: 1.05rem;
+    --fs-xl: 1.2rem;
+    --fs-2xl: 1.5rem;
+    --fs-3xl: 1.8rem;
+  }
+
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    transform: translateX(-100%);
+    z-index: 200;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .topbar-menu-btn {
+    display: flex;
+  }
+
+  .topbar-actions #btn-add-transaction-topbar {
+    display: none;
+  }
+
+  .page-container {
+    padding: var(--space-base);
+    padding-bottom: calc(64px + 28px + env(safe-area-inset-bottom, 0));
+  }
+
+  .bottom-nav {
+    display: flex;
+  }
+
+  .desktop-fab {
+    display: none;
+  }
+
+  /* Dashboard */
+  .dashboard-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-sm);
+  }
+
+  .stat-card {
+    padding: var(--space-base);
+  }
+
+  .stat-card .stat-value {
+    font-size: var(--fs-lg);
+  }
+
+  .stat-card .stat-icon {
+    width: 34px;
+    height: 34px;
+    font-size: 1.1rem;
+    margin-bottom: var(--space-sm);
+  }
+
+  .dashboard-charts {
+    grid-template-columns: 1fr;
+    gap: var(--space-sm);
+  }
+
+  /* Transactions */
+  .transactions-filters {
+    flex-direction: column;
+  }
+
+  .transactions-filters .input-group {
+    width: 100%;
+  }
+
+  .transactions-summary {
+    flex-direction: row;
+    gap: var(--space-sm);
+  }
+
+  .transactions-summary-card {
+    padding: var(--space-sm);
+  }
+
+  .transactions-summary-value {
+    font-size: var(--fs-base);
+  }
+
+  .transaction-actions {
+    opacity: 1;
+  }
+
+  .transaction-item {
+    padding: var(--space-sm) var(--space-md);
+  }
+
+  /* Budgets */
+  .budgets-overview {
+    grid-template-columns: 1fr;
+    gap: var(--space-sm);
+  }
+
+  .budgets-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-md);
+  }
+
+  /* Reports */
+  .reports-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .reports-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-sm);
+  }
+
+  .reports-period-selector {
+    width: 100%;
+  }
+
+  .reports-period-selector .tab-btn {
+    flex: 1;
+  }
+
+  /* Modal */
+  .modal-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .modal {
+    max-width: 100%;
+    max-height: 90dvh;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    animation: modalSlideUp 0.3s var(--ease-spring);
+  }
+
+  @keyframes modalSlideUp {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  /* Toast */
+  .toast-container {
+    top: auto;
+    bottom: calc(64px + 24px + env(safe-area-inset-bottom, 0));
+    left: var(--space-base);
+    right: var(--space-base);
+  }
+
+  .toast {
+    min-width: auto;
+    max-width: 100%;
+  }
+
+  /* Settings */
+  .categories-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
+
+  /* Input row */
+  .input-row {
+    grid-template-columns: 1fr;
+  }
+
+  /* Card */
+  .card {
+    padding: var(--space-base);
+  }
+}
+
+/* ---------- Desktop: > 1024px ---------- */
+@media (min-width: 1025px) {
+  .bottom-nav {
+    display: none;
+  }
+
+  .desktop-fab {
+    display: flex;
+  }
+
+  .topbar-menu-btn {
+    display: none;
+  }
+}
+
+/* ---------- Large Desktop: > 1440px ---------- */
+@media (min-width: 1440px) {
+  .dashboard-stats {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .page-container {
+    padding: var(--space-xl) var(--space-2xl);
+  }
+}
+
+/* ---------- Reduced Motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

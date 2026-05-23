@@ -1,0 +1,227 @@
+/* ================================================
+   Manage Money - Design System
+   Premium dark glassmorphism theme
+   ================================================ */
+
+/* ---------- CSS Custom Properties ---------- */
+:root {
+  /* Color system */
+  --bg-base: hsl(225, 25%, 6%);
+  --bg-surface: hsl(225, 20%, 10%);
+  --bg-card: hsl(225, 18%, 13%);
+  --bg-card-hover: hsl(225, 18%, 16%);
+  --bg-elevated: hsl(225, 18%, 18%);
+  --bg-input: hsl(225, 20%, 11%);
+
+  --text-primary: hsl(220, 20%, 95%);
+  --text-secondary: hsl(220, 15%, 65%);
+  --text-tertiary: hsl(220, 12%, 45%);
+  --text-inverse: hsl(225, 25%, 6%);
+
+  --accent: hsl(218, 90%, 60%);
+  --accent-hover: hsl(218, 90%, 67%);
+  --accent-glow: hsla(218, 90%, 60%, 0.3);
+  --accent-subtle: hsla(218, 90%, 60%, 0.1);
+
+  --income: hsl(155, 70%, 48%);
+  --income-glow: hsla(155, 70%, 48%, 0.25);
+  --income-subtle: hsla(155, 70%, 48%, 0.1);
+
+  --expense: hsl(0, 72%, 58%);
+  --expense-glow: hsla(0, 72%, 58%, 0.25);
+  --expense-subtle: hsla(0, 72%, 58%, 0.1);
+
+  --warning: hsl(38, 92%, 55%);
+  --warning-glow: hsla(38, 92%, 55%, 0.25);
+  --warning-subtle: hsla(38, 92%, 55%, 0.1);
+
+  --info: hsl(205, 85%, 55%);
+  --info-subtle: hsla(205, 85%, 55%, 0.1);
+
+  --border: hsla(220, 20%, 50%, 0.12);
+  --border-light: hsla(220, 20%, 50%, 0.06);
+  --divider: hsla(220, 20%, 50%, 0.08);
+
+  /* Glass */
+  --glass-bg: hsla(225, 20%, 14%, 0.6);
+  --glass-border: hsla(220, 30%, 60%, 0.1);
+  --glass-blur: 20px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px hsla(0, 0%, 0%, 0.3);
+  --shadow-md: 0 4px 12px hsla(0, 0%, 0%, 0.3);
+  --shadow-lg: 0 8px 32px hsla(0, 0%, 0%, 0.4);
+  --shadow-xl: 0 16px 48px hsla(0, 0%, 0%, 0.5);
+  --shadow-glow: 0 0 40px var(--accent-glow);
+
+  /* Typography */
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --fs-xs: 0.7rem;
+  --fs-sm: 0.8rem;
+  --fs-base: 0.9rem;
+  --fs-md: 1rem;
+  --fs-lg: 1.15rem;
+  --fs-xl: 1.35rem;
+  --fs-2xl: 1.7rem;
+  --fs-3xl: 2.2rem;
+  --fw-light: 300;
+  --fw-normal: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+  --fw-extrabold: 800;
+
+  /* Spacing */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 0.75rem;
+  --space-base: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+
+  /* Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
+
+  /* Layout */
+  --sidebar-width: 260px;
+  --sidebar-collapsed: 72px;
+  --topbar-height: 64px;
+  --bottom-nav-height: 72px;
+
+  color-scheme: dark;
+}
+
+/* Light mode */
+[data-theme="light"] {
+  --bg-base: hsl(220, 20%, 96%);
+  --bg-surface: hsl(220, 18%, 100%);
+  --bg-card: hsl(0, 0%, 100%);
+  --bg-card-hover: hsl(220, 15%, 97%);
+  --bg-elevated: hsl(0, 0%, 100%);
+  --bg-input: hsl(220, 18%, 95%);
+
+  --text-primary: hsl(225, 25%, 12%);
+  --text-secondary: hsl(220, 12%, 42%);
+  --text-tertiary: hsl(220, 10%, 62%);
+
+  --border: hsla(220, 20%, 20%, 0.1);
+  --border-light: hsla(220, 20%, 20%, 0.05);
+  --divider: hsla(220, 20%, 20%, 0.06);
+
+  --glass-bg: hsla(0, 0%, 100%, 0.7);
+  --glass-border: hsla(220, 20%, 20%, 0.08);
+
+  --shadow-sm: 0 1px 3px hsla(220, 20%, 10%, 0.06);
+  --shadow-md: 0 4px 12px hsla(220, 20%, 10%, 0.08);
+  --shadow-lg: 0 8px 32px hsla(220, 20%, 10%, 0.1);
+  --shadow-xl: 0 16px 48px hsla(220, 20%, 10%, 0.12);
+
+  color-scheme: light;
+}
+
+/* ---------- Reset & Base ---------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font);
+  font-size: var(--fs-base);
+  color: var(--text-primary);
+  background: var(--bg-base);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+  height: 100dvh;
+  width: 100vw;
+}
+
+#app {
+  height: 100dvh;
+  width: 100vw;
+  overflow: hidden;
+  position: relative;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+}
+
+input, select, textarea {
+  font: inherit;
+  color: inherit;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* ---------- Utility Classes ---------- */
+.hidden { display: none !important; }
+
+.screen {
+  display: none;
+  width: 100%;
+  height: 100dvh;
+}
+.screen.active { display: flex; }
+
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+}
+
+/* ---------- Scrollbar ---------- */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: hsla(220, 15%, 50%, 0.2);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsla(220, 15%, 50%, 0.35);
+}
+
+/* ---------- Selection ---------- */
+::selection {
+  background: var(--accent);
+  color: white;
+}
