@@ -10,6 +10,12 @@ import { showToast } from '../components/toast.js';
 
 let unsubscribers = [];
 
+const DEFAULT_CAT_IDS = new Set([
+  'food', 'transport', 'shopping', 'bills', 'entertainment', 'health', 'education', 
+  'rent', 'phone', 'gift', 'coffee', 'other_expense', 'salary', 'freelance', 
+  'investment', 'bonus', 'other_income'
+]);
+
 async function loadSheetJS() {
   if (window.XLSX) return window.XLSX;
   return new Promise((resolve, reject) => {
@@ -54,15 +60,20 @@ export function renderSettings(container) {
         <div class="settings-section">
           <div class="settings-section-title">Danh mục chi tiêu</div>
           <div class="categories-grid" id="expense-categories">
-            ${expenseCats.map(c => `
-              <div class="category-card" data-id="${c.id}">
-                <button class="category-card-delete" data-delete="${c.id}" title="Xóa">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                </button>
-                <div class="category-card-icon">${c.icon}</div>
-                <div class="category-card-name">${c.name}</div>
-              </div>
-            `).join('')}
+            ${expenseCats.map(c => {
+              const isDefault = DEFAULT_CAT_IDS.has(c.id);
+              return `
+                <div class="category-card" data-id="${c.id}">
+                  ${!isDefault ? `
+                    <button class="category-card-delete" data-delete="${c.id}" title="Xóa">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                  ` : ''}
+                  <div class="category-card-icon">${c.icon}</div>
+                  <div class="category-card-name">${c.name}</div>
+                </div>
+              `;
+            }).join('')}
             <div class="category-card" id="add-expense-cat" style="border-style: dashed; opacity: 0.6;">
               <div class="category-card-icon">➕</div>
               <div class="category-card-name">Thêm</div>
@@ -73,15 +84,20 @@ export function renderSettings(container) {
         <div class="settings-section">
           <div class="settings-section-title">Danh mục thu nhập</div>
           <div class="categories-grid" id="income-categories">
-            ${incomeCats.map(c => `
-              <div class="category-card" data-id="${c.id}">
-                <button class="category-card-delete" data-delete="${c.id}" title="Xóa">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                </button>
-                <div class="category-card-icon">${c.icon}</div>
-                <div class="category-card-name">${c.name}</div>
-              </div>
-            `).join('')}
+            ${incomeCats.map(c => {
+              const isDefault = DEFAULT_CAT_IDS.has(c.id);
+              return `
+                <div class="category-card" data-id="${c.id}">
+                  ${!isDefault ? `
+                    <button class="category-card-delete" data-delete="${c.id}" title="Xóa">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                  ` : ''}
+                  <div class="category-card-icon">${c.icon}</div>
+                  <div class="category-card-name">${c.name}</div>
+                </div>
+              `;
+            }).join('')}
             <div class="category-card" id="add-income-cat" style="border-style: dashed; opacity: 0.6;">
               <div class="category-card-icon">➕</div>
               <div class="category-card-name">Thêm</div>
@@ -437,13 +453,13 @@ function openCategoryForm(type) {
   const html = `
     <form class="modal-form" id="category-form">
       <div class="input-group">
-        <label>Icon</label>
-        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-          ${emojis.map((e, i) => `
-            <button type="button" class="category-chip emoji-pick ${i === 0 ? 'active' : ''}" data-emoji="${e}" style="padding: 8px 12px; font-size: 1.2rem;">${e}</button>
+        <label for="cat-icon">Icon (Emoji từ bàn phím hoặc chọn bên dưới)</label>
+        <input type="text" id="cat-icon" placeholder="Nhập 1 emoji (e.g. 🐶)" required maxlength="4" value="${emojis[0]}" style="font-size: 1.2rem; padding: 0.6rem 0.8rem;" />
+        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px;">
+          ${emojis.map(e => `
+            <button type="button" class="category-chip emoji-pick" data-emoji="${e}" style="padding: 8px 12px; font-size: 1.2rem;">${e}</button>
           `).join('')}
         </div>
-        <input type="hidden" id="cat-icon" value="${emojis[0]}" />
       </div>
       <div class="input-group">
         <label for="cat-name">Tên danh mục</label>
@@ -462,11 +478,29 @@ function openCategoryForm(type) {
 
   openModal(`Thêm danh mục ${type === 'expense' ? 'chi tiêu' : 'thu nhập'}`, html, (body) => {
     const iconInput = body.querySelector('#cat-icon');
-    body.querySelectorAll('.emoji-pick').forEach(btn => {
+    const emojiButtons = body.querySelectorAll('.emoji-pick');
+
+    // Highlight initial active emoji suggestion if matches
+    emojiButtons.forEach(btn => {
+      if (btn.dataset.emoji === iconInput.value) {
+        btn.classList.add('active');
+      }
+    });
+
+    // Emoji pick click listener
+    emojiButtons.forEach(btn => {
       btn.addEventListener('click', () => {
-        body.querySelectorAll('.emoji-pick').forEach(b => b.classList.remove('active'));
+        emojiButtons.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         iconInput.value = btn.dataset.emoji;
+      });
+    });
+
+    // Sync input typing with active state of suggested emojis
+    iconInput.addEventListener('input', () => {
+      const val = iconInput.value.trim();
+      emojiButtons.forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.emoji === val);
       });
     });
 
@@ -476,7 +510,7 @@ function openCategoryForm(type) {
       try {
         await addCategory({
           name: body.querySelector('#cat-name').value,
-          icon: iconInput.value,
+          icon: iconInput.value.trim() || '📦',
           color: body.querySelector('#cat-color').value,
           type,
         });
