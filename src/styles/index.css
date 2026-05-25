@@ -136,7 +136,8 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  -webkit-tap-highlight-color: transparent;
+  -webkit-tap-highlight-color: transparent !important;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0) !important;
 }
 
 html {
@@ -165,13 +166,18 @@ body {
 }
 
 a, button, select, input, textarea, [role="button"] {
-  outline: none;
-  -webkit-tap-highlight-color: transparent;
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0) !important;
 }
 
-a:focus, button:focus, select:focus, input:focus, textarea:focus, [role="button"]:focus {
-  outline: none;
-  box-shadow: none;
+a:focus, button:focus, select:focus, input:focus, textarea:focus, [role="button"]:focus,
+a:active, button:active, select:active, input:active, textarea:active, [role="button"]:active {
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0) !important;
 }
 
 a {
