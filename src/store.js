@@ -24,6 +24,7 @@ let unsubscribers = [];
 let transactions = [];
 let categories = [...DEFAULT_CATEGORIES];
 let budgets = [];
+let installments = [];
 let userProfile = {};
 let listeners = {};
 
@@ -34,6 +35,7 @@ export function setUserId(uid) {
   transactions = [];
   categories = [...DEFAULT_CATEGORIES];
   budgets = [];
+  installments = [];
   userProfile = {};
 
   currentUserId = uid;
@@ -56,6 +58,10 @@ function categoriesRef() {
 
 function budgetsRef() {
   return collection(db, 'users', currentUserId, 'budgets');
+}
+
+function installmentsRef() {
+  return collection(db, 'users', currentUserId, 'installments');
 }
 
 // ------ Subscribe to realtime updates ------
@@ -88,6 +94,13 @@ function subscribeToData() {
   });
   unsubscribers.push(unsubBudget);
 
+  // Installments
+  const unsubInstallments = onSnapshot(installmentsRef(), (snapshot) => {
+    installments = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+    emit('installments');
+  });
+  unsubscribers.push(unsubInstallments);
+
   // User profile
   const unsubProfile = onSnapshot(userRef(), (docSnap) => {
     if (docSnap.exists()) {
@@ -117,6 +130,7 @@ export function on(event, fn) {
 export function getTransactions() { return transactions; }
 export function getCategories() { return categories; }
 export function getBudgets() { return budgets; }
+export function getInstallments() { return installments; }
 export function getUserProfile() { return userProfile; }
 
 // ------ Transaction CRUD ------
@@ -194,6 +208,67 @@ export async function setBudget(data) {
 
 export async function deleteBudget(id) {
   return deleteDoc(doc(budgetsRef(), id));
+}
+
+// ------ Installments CRUD ------
+export async function addInstallment(data) {
+  const instData = {
+    name: data.name || '',
+    totalAmount: Number(data.totalAmount) || 0,
+    monthlyAmount: Number(data.monthlyAmount) || 0,
+    monthsTotal: Number(data.monthsTotal) || 1,
+    monthsPaid: Number(data.monthsPaid) || 0,
+    dueDate: Number(data.dueDate) || 1,
+    categoryId: data.categoryId || 'bills',
+    wallet: data.wallet || 'bank',
+    note: data.note || '',
+    status: data.status || 'active',
+    createdAt: Timestamp.now(),
+  };
+  return addDoc(installmentsRef(), instData);
+}
+
+export async function updateInstallment(id, data) {
+  const updateData = {};
+  if (data.name !== undefined) updateData.name = data.name;
+  if (data.totalAmount !== undefined) updateData.totalAmount = Number(data.totalAmount) || 0;
+  if (data.monthlyAmount !== undefined) updateData.monthlyAmount = Number(data.monthlyAmount) || 0;
+  if (data.monthsTotal !== undefined) updateData.monthsTotal = Number(data.monthsTotal) || 1;
+  if (data.monthsPaid !== undefined) updateData.monthsPaid = Number(data.monthsPaid) || 0;
+  if (data.dueDate !== undefined) updateData.dueDate = Number(data.dueDate) || 1;
+  if (data.categoryId !== undefined) updateData.categoryId = data.categoryId;
+  if (data.wallet !== undefined) updateData.wallet = data.wallet;
+  if (data.note !== undefined) updateData.note = data.note;
+  if (data.status !== undefined) updateData.status = data.status;
+  return updateDoc(doc(installmentsRef(), id), updateData);
+}
+
+export async function deleteInstallment(id) {
+  return deleteDoc(doc(installmentsRef(), id));
+}
+
+export async function payInstallmentTerm(id) {
+  const inst = installments.find(i => i.id === id);
+  if (!inst) return;
+
+  const newMonthsPaid = inst.monthsPaid + 1;
+  const isCompleted = newMonthsPaid >= inst.monthsTotal;
+
+  // 1. Update term and status
+  await updateDoc(doc(installmentsRef(), id), {
+    monthsPaid: newMonthsPaid,
+    status: isCompleted ? 'completed' : 'active'
+  });
+
+  // 2. Automatically record main expense transaction
+  await addTransaction({
+    type: 'expense',
+    amount: inst.monthlyAmount,
+    categoryId: inst.categoryId || 'bills',
+    wallet: inst.wallet || 'bank',
+    note: `Thanh toán trả góp: ${inst.name} (Kỳ ${newMonthsPaid}/${inst.monthsTotal})`,
+    date: new Date()
+  });
 }
 
 // ------ User Profile ------

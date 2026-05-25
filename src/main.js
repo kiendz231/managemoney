@@ -15,6 +15,7 @@ import { initLiquidGlass } from './components/liquid-glass.js';
 
 import { renderDashboard, destroyDashboard } from './pages/dashboard.js';
 import { renderTransactions, destroyTransactions } from './pages/transactions.js';
+import { renderInstallments, destroyInstallments } from './pages/installments.js';
 import { renderReports, destroyReports } from './pages/reports.js';
 import { renderSettings, destroySettings } from './pages/settings.js';
 
@@ -180,6 +181,7 @@ function getAuthErrorMessage(code, err) {
 const pageTitles = {
   dashboard: 'Tổng quan',
   transactions: 'Giao dịch',
+  installments: 'Trả góp',
   reports: 'Báo cáo',
   settings: 'Cài đặt',
 };
@@ -187,6 +189,7 @@ const pageTitles = {
 const pageRenderers = {
   dashboard: renderDashboard,
   transactions: renderTransactions,
+  installments: renderInstallments,
   reports: renderReports,
   settings: renderSettings,
 };
@@ -194,6 +197,7 @@ const pageRenderers = {
 const pageDestroyers = {
   dashboard: destroyDashboard,
   transactions: destroyTransactions,
+  installments: destroyInstallments,
   reports: destroyReports,
   settings: destroySettings,
 };
