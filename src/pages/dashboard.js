@@ -53,18 +53,18 @@ export function renderDashboard(container) {
             <div class="stat-icon" style="background: var(--accent-subtle)">💎</div>
             <div class="stat-label">Số dư</div>
             <div class="stat-value">${formatCurrency(overallBalance)}</div>
-            <div style="font-size: 0.72rem; color: var(--text-secondary); margin-top: 6px; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
-              <span>💵 Tiền mặt: <strong style="color: var(--text-primary); font-weight: 500;">${formatCurrency(cashBalance)}</strong></span>
-              <span style="opacity: 0.3;">|</span>
-              <span>💳 Tài khoản: <strong style="color: var(--text-primary); font-weight: 500;">${formatCurrency(bankBalance)}</strong></span>
+            <div class="stat-subtext-container">
+              <span class="stat-subtext-item">💵 Tiền mặt: <strong>${formatCurrency(cashBalance)}</strong></span>
+              <span class="stat-divider">|</span>
+              <span class="stat-subtext-item">💳 Tài khoản: <strong>${formatCurrency(bankBalance)}</strong></span>
             </div>
           </div>
           <div class="stat-card" style="--stat-color: var(--warning)">
             <div class="stat-icon" style="background: var(--warning-subtle)">💳</div>
             <div class="stat-label">Trả góp tháng này</div>
             <div class="stat-value" style="color: var(--warning)">${formatCurrency(monthlyDue)}</div>
-            <div style="font-size: 0.72rem; color: var(--text-secondary); margin-top: 6px; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
-              <span>Dư nợ còn lại: <strong style="color: var(--text-primary); font-weight: 500;">${formatCurrency(totalRemaining)}</strong></span>
+            <div class="stat-subtext-container">
+              <span class="stat-subtext-item">💸 Dư nợ còn lại: <strong>${formatCurrency(totalRemaining)}</strong></span>
             </div>
           </div>
         </div>
