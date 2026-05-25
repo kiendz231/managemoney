@@ -164,6 +164,16 @@ body {
   position: relative;
 }
 
+a, button, select, input, textarea, [role="button"] {
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+a:focus, button:focus, select:focus, input:focus, textarea:focus, [role="button"]:focus {
+  outline: none;
+  box-shadow: none;
+}
+
 a {
   text-decoration: none;
   color: inherit;
