@@ -1,5 +1,5 @@
 // Dashboard page
-import { getMonthSummary, getCategorySpending, getDailySpending, getTransactions, getCategories, on, getOverallBalance, getCashBalance, getBankBalance } from '../store.js';
+import { getMonthSummary, getCategorySpending, getDailySpending, getTransactions, getCategories, on, getOverallBalance, getCashBalance, getBankBalance, getInstallments } from '../store.js';
 import { formatCurrency, formatDateRelative, formatCompact } from '../utils/format.js';
 import { getCategoryById } from '../utils/categories.js';
 import { openTransactionForm } from '../components/transaction-form.js';
@@ -26,6 +26,15 @@ export function renderDashboard(container) {
     const categories = getCategories();
     const recent = transactions.slice(0, 5);
 
+    // Compute installments stats
+    const instList = getInstallments();
+    const activeInst = instList.filter(i => (i.status || 'active') === 'active');
+    const totalRemaining = activeInst.reduce((sum, i) => {
+      const remainingMonths = Math.max(0, i.monthsTotal - i.monthsPaid);
+      return sum + (remainingMonths * i.monthlyAmount);
+    }, 0);
+    const monthlyDue = activeInst.reduce((sum, i) => sum + i.monthlyAmount, 0);
+
     container.innerHTML = `
       <div class="page-enter">
         <!-- Stat Cards -->
@@ -48,6 +57,14 @@ export function renderDashboard(container) {
               <span>💵 Tiền mặt: <strong style="color: var(--text-primary); font-weight: 500;">${formatCurrency(cashBalance)}</strong></span>
               <span style="opacity: 0.3;">|</span>
               <span>💳 Tài khoản: <strong style="color: var(--text-primary); font-weight: 500;">${formatCurrency(bankBalance)}</strong></span>
+            </div>
+          </div>
+          <div class="stat-card" style="--stat-color: var(--warning)">
+            <div class="stat-icon" style="background: var(--warning-subtle)">💳</div>
+            <div class="stat-label">Trả góp tháng này</div>
+            <div class="stat-value" style="color: var(--warning)">${formatCurrency(monthlyDue)}</div>
+            <div style="font-size: 0.72rem; color: var(--text-secondary); margin-top: 6px; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+              <span>Dư nợ còn lại: <strong style="color: var(--text-primary); font-weight: 500;">${formatCurrency(totalRemaining)}</strong></span>
             </div>
           </div>
         </div>
@@ -132,6 +149,7 @@ export function renderDashboard(container) {
 
   render();
   unsubscribers.push(on('transactions', render));
+  unsubscribers.push(on('installments', render));
   unsubscribers.push(on('profile', render));
 }
 
