@@ -10,12 +10,6 @@ import { showToast } from '../components/toast.js';
 
 let unsubscribers = [];
 
-const DEFAULT_CAT_IDS = new Set([
-  'food', 'transport', 'shopping', 'bills', 'entertainment', 'health', 'education', 
-  'rent', 'phone', 'gift', 'coffee', 'other_expense', 'salary', 'freelance', 
-  'investment', 'bonus', 'other_income'
-]);
-
 async function loadSheetJS() {
   if (window.XLSX) return window.XLSX;
   return new Promise((resolve, reject) => {
@@ -60,20 +54,15 @@ export function renderSettings(container) {
         <div class="settings-section">
           <div class="settings-section-title">Danh mục chi tiêu</div>
           <div class="categories-grid" id="expense-categories">
-            ${expenseCats.map(c => {
-              const isDefault = DEFAULT_CAT_IDS.has(c.id);
-              return `
-                <div class="category-card" data-id="${c.id}">
-                  ${!isDefault ? `
-                    <button class="category-card-delete" data-delete="${c.id}" title="Xóa">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                    </button>
-                  ` : ''}
-                  <div class="category-card-icon">${c.icon}</div>
-                  <div class="category-card-name">${c.name}</div>
-                </div>
-              `;
-            }).join('')}
+            ${expenseCats.map(c => `
+              <div class="category-card" data-id="${c.id}">
+                <button class="category-card-delete" data-delete="${c.id}" title="Xóa">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+                <div class="category-card-icon">${c.icon}</div>
+                <div class="category-card-name">${c.name}</div>
+              </div>
+            `).join('')}
             <div class="category-card" id="add-expense-cat" style="border-style: dashed; opacity: 0.6;">
               <div class="category-card-icon">➕</div>
               <div class="category-card-name">Thêm</div>
@@ -84,20 +73,15 @@ export function renderSettings(container) {
         <div class="settings-section">
           <div class="settings-section-title">Danh mục thu nhập</div>
           <div class="categories-grid" id="income-categories">
-            ${incomeCats.map(c => {
-              const isDefault = DEFAULT_CAT_IDS.has(c.id);
-              return `
-                <div class="category-card" data-id="${c.id}">
-                  ${!isDefault ? `
-                    <button class="category-card-delete" data-delete="${c.id}" title="Xóa">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                    </button>
-                  ` : ''}
-                  <div class="category-card-icon">${c.icon}</div>
-                  <div class="category-card-name">${c.name}</div>
-                </div>
-              `;
-            }).join('')}
+            ${incomeCats.map(c => `
+              <div class="category-card" data-id="${c.id}">
+                <button class="category-card-delete" data-delete="${c.id}" title="Xóa">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+                <div class="category-card-icon">${c.icon}</div>
+                <div class="category-card-name">${c.name}</div>
+              </div>
+            `).join('')}
             <div class="category-card" id="add-income-cat" style="border-style: dashed; opacity: 0.6;">
               <div class="category-card-icon">➕</div>
               <div class="category-card-name">Thêm</div>

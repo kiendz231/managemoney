@@ -77,11 +77,17 @@ function subscribeToData() {
   // Custom categories
   const unsubCat = onSnapshot(categoriesRef(), (snapshot) => {
     const custom = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-    // Merge default + custom, custom overrides default by id
-    const customIds = new Set(custom.map(c => c.id));
+    
+    // Custom active (not deleted)
+    const customActive = custom.filter(c => !c.deleted);
+    // Custom deleted IDs (default categories soft-deleted)
+    const deletedIds = new Set(custom.filter(c => c.deleted).map(c => c.id));
+    // Custom active IDs
+    const activeIds = new Set(customActive.map(c => c.id));
+
     categories = [
-      ...DEFAULT_CATEGORIES.filter(c => !customIds.has(c.id)),
-      ...custom,
+      ...DEFAULT_CATEGORIES.filter(c => !activeIds.has(c.id) && !deletedIds.has(c.id)),
+      ...customActive,
     ];
     emit('categories');
   });
@@ -192,7 +198,19 @@ export async function addCategory(data) {
 }
 
 export async function deleteCategory(id) {
-  return deleteDoc(doc(categoriesRef(), id));
+  const defaultIds = new Set([
+    'food', 'transport', 'shopping', 'bills', 'entertainment', 'health', 'education', 
+    'rent', 'phone', 'gift', 'coffee', 'other_expense', 'salary', 'freelance', 
+    'investment', 'bonus', 'other_income'
+  ]);
+  
+  if (defaultIds.has(id)) {
+    // If it's a default category, soft-delete it by setting deleted: true in Firestore
+    return setDoc(doc(categoriesRef(), id), { deleted: true });
+  } else {
+    // If it's a custom category, delete it from Firestore
+    return deleteDoc(doc(categoriesRef(), id));
+  }
 }
 
 // ------ Budget CRUD ------
