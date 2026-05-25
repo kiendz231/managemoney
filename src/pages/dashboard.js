@@ -1,5 +1,5 @@
 // Dashboard page
-import { getMonthSummary, getCategorySpending, getDailySpending, getTransactions, getCategories, on, getBudgets, getBudgetStatus, getOverallBalance, getCashBalance, getBankBalance } from '../store.js';
+import { getMonthSummary, getCategorySpending, getDailySpending, getTransactions, getCategories, on, getOverallBalance, getCashBalance, getBankBalance } from '../store.js';
 import { formatCurrency, formatDateRelative, formatCompact } from '../utils/format.js';
 import { getCategoryById } from '../utils/categories.js';
 import { openTransactionForm } from '../components/transaction-form.js';
@@ -25,9 +25,6 @@ export function renderDashboard(container) {
     const transactions = getTransactions();
     const categories = getCategories();
     const recent = transactions.slice(0, 5);
-    const budgetStatus = getBudgetStatus(year, month);
-    const totalBudget = budgetStatus.reduce((s, b) => s + b.amount, 0);
-    const totalBudgetSpent = budgetStatus.reduce((s, b) => s + b.spent, 0);
 
     container.innerHTML = `
       <div class="page-enter">
@@ -52,12 +49,6 @@ export function renderDashboard(container) {
               <span style="opacity: 0.3;">|</span>
               <span>💳 Tài khoản: <strong style="color: var(--text-primary); font-weight: 500;">${formatCurrency(bankBalance)}</strong></span>
             </div>
-          </div>
-          <div class="stat-card" style="--stat-color: var(--warning)">
-            <div class="stat-icon" style="background: var(--warning-subtle)">🎯</div>
-            <div class="stat-label">Ngân sách</div>
-            <div class="stat-value">${totalBudget > 0 ? Math.round((totalBudgetSpent / totalBudget) * 100) + '%' : '—'}</div>
-            ${totalBudget > 0 ? `<div class="stat-change ${totalBudgetSpent > totalBudget ? 'negative' : 'positive'}">${formatCompact(totalBudget - totalBudgetSpent)} còn lại</div>` : ''}
           </div>
         </div>
 
@@ -141,7 +132,6 @@ export function renderDashboard(container) {
 
   render();
   unsubscribers.push(on('transactions', render));
-  unsubscribers.push(on('budgets', render));
   unsubscribers.push(on('profile', render));
 }
 

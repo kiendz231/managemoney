@@ -15,7 +15,6 @@ import { initLiquidGlass } from './components/liquid-glass.js';
 
 import { renderDashboard, destroyDashboard } from './pages/dashboard.js';
 import { renderTransactions, destroyTransactions } from './pages/transactions.js';
-import { renderBudgets, destroyBudgets } from './pages/budgets.js';
 import { renderReports, destroyReports } from './pages/reports.js';
 import { renderSettings, destroySettings } from './pages/settings.js';
 
@@ -62,10 +61,10 @@ function init() {
 
 // ---- Login Screen ----
 function showLoginScreen() {
+  document.getElementById('login-form-container').classList.remove('hidden');
+  document.getElementById('login-loading').classList.add('hidden');
   document.getElementById('login-screen').classList.add('active');
   document.getElementById('main-app').classList.remove('active');
-  document.getElementById('login-loading').classList.add('hidden');
-  document.getElementById('login-form-container').classList.remove('hidden');
 }
 
 function showMainApp(user) {
@@ -181,7 +180,6 @@ function getAuthErrorMessage(code, err) {
 const pageTitles = {
   dashboard: 'Tổng quan',
   transactions: 'Giao dịch',
-  budgets: 'Ngân sách',
   reports: 'Báo cáo',
   settings: 'Cài đặt',
 };
@@ -189,7 +187,6 @@ const pageTitles = {
 const pageRenderers = {
   dashboard: renderDashboard,
   transactions: renderTransactions,
-  budgets: renderBudgets,
   reports: renderReports,
   settings: renderSettings,
 };
@@ -197,7 +194,6 @@ const pageRenderers = {
 const pageDestroyers = {
   dashboard: destroyDashboard,
   transactions: destroyTransactions,
-  budgets: destroyBudgets,
   reports: destroyReports,
   settings: destroySettings,
 };
