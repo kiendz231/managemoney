@@ -1321,7 +1321,7 @@
   opacity: 0.3;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 1024px) {
   .stat-subtext-container {
     flex-direction: column;
     gap: 4px;
