@@ -1665,3 +1665,112 @@
     margin-top: 4px;
   }
 }
+
+/* ---------- Settings Profile & Streak Card ---------- */
+.settings-profile-streak-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  background: var(--bg-glass-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+.settings-profile-streak-card.active {
+  background: linear-gradient(135deg, rgba(255, 107, 0, 0.08) 0%, rgba(255, 60, 0, 0.03) 100%);
+  border-color: rgba(255, 107, 0, 0.25);
+  box-shadow: 0 8px 32px 0 rgba(255, 107, 0, 0.06);
+}
+
+.settings-profile-streak-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 10% 20%, rgba(255, 107, 0, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.settings-profile-streak-card.active::before {
+  opacity: 1;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  position: relative;
+  z-index: 1;
+}
+
+.profile-avatar {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), #FF8A5C);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: var(--fw-bold);
+  box-shadow: 0 4px 12px rgba(108, 92, 231, 0.25);
+}
+
+.profile-info {
+  flex: 1;
+}
+
+.profile-name {
+  font-size: var(--fs-base);
+  font-weight: var(--fw-bold);
+  color: var(--text-primary);
+  margin: 0 0 2px 0;
+}
+
+.profile-email {
+  font-size: var(--fs-xs);
+  color: var(--text-tertiary);
+  margin: 0;
+}
+
+.streak-widget-divider {
+  height: 1px;
+  background: var(--border-light);
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.settings-profile-streak-card .streak-main {
+  position: relative;
+  z-index: 1;
+}
+
+.settings-profile-streak-card .streak-weekly {
+  position: relative;
+  z-index: 1;
+  border-left: none;
+  border-top: 1px solid var(--border-light);
+  padding-left: 0;
+  padding-top: var(--space-md);
+  margin-top: 4px;
+}
+
+@media (max-width: 767px) {
+  .settings-profile-streak-card {
+    padding: var(--space-md);
+  }
+}

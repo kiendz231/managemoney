@@ -1,10 +1,10 @@
 // Settings page
-import { getCategories, addCategory, deleteCategory, updateUserProfile, getUserProfile, on, getTransactions, addTransaction, deleteTransaction } from '../store.js';
+import { getCategories, addCategory, deleteCategory, updateUserProfile, getUserProfile, on, getTransactions, addTransaction, deleteTransaction, getStreakStatus } from '../store.js';
 import { getCategoriesByType } from '../utils/categories.js';
 import { exportToCSV } from '../utils/export.js';
 import { parseTransactionsCSV } from '../utils/import.js';
 import { formatCurrency } from '../utils/format.js';
-import { logOut } from '../auth.js';
+import { logOut, getCurrentUser } from '../auth.js';
 import { openModal, closeModal } from '../components/modal.js';
 import { showToast } from '../components/toast.js';
 
@@ -30,9 +30,61 @@ export function renderSettings(container) {
     const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
     const expenseCats = getCategoriesByType(categories, 'expense');
     const incomeCats = getCategoriesByType(categories, 'income');
+    const streak = getStreakStatus();
+    const currentUser = getCurrentUser();
+    const name = currentUser?.displayName || currentUser?.email?.split('@')[0] || 'Thành viên';
 
     container.innerHTML = `
       <div class="page-enter">
+        <!-- Hồ sơ & Chuỗi giữ lửa -->
+        <div class="settings-section">
+          <div class="settings-section-title">Hồ sơ & Chuỗi giữ lửa</div>
+          <div class="settings-profile-streak-card ${streak.isTodayActive ? 'active' : 'inactive'}">
+            <div class="profile-header">
+              <div class="profile-avatar">${name.charAt(0).toUpperCase()}</div>
+              <div class="profile-info">
+                <h3 class="profile-name">${name}</h3>
+                <p class="profile-email">${currentUser?.email || ''}</p>
+              </div>
+            </div>
+            
+            <div class="streak-widget-divider"></div>
+            
+            <div class="streak-main">
+              <div class="streak-fire-wrapper">
+                <div class="streak-fire-glow"></div>
+                <span class="streak-fire-icon ${streak.isTodayActive ? 'burning' : 'cold'}">🔥</span>
+                <span class="streak-count-value">${streak.currentStreak}</span>
+              </div>
+              <div class="streak-details">
+                <h4 class="streak-title" style="margin: 0 0 2px 0;">Chuỗi hiện tại: <strong style="color: #FF8A00;">${streak.currentStreak} ngày</strong></h4>
+                <p class="streak-message">
+                  ${streak.isTodayActive 
+                    ? 'Tuyệt vời! Hôm nay bạn đã ghi chép giao dịch để giữ lửa. 🎉' 
+                    : 'Hôm nay bạn chưa thêm giao dịch. Nhập ngay để giữ lửa nhé! 💪'}
+                </p>
+                <div class="streak-sub-info">
+                  <span>🏆 Kỷ lục: <strong>${streak.longestStreak} ngày</strong></span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="streak-weekly">
+              <div class="streak-weekly-title">Lịch tuần giữ lửa</div>
+              <div class="streak-days-list">
+                ${streak.streakDays.map(day => `
+                  <div class="streak-day-item ${day.isActive ? 'active' : ''} ${day.isToday ? 'today' : ''}">
+                    <span class="streak-day-label">${day.dayLabel}</span>
+                    <div class="streak-day-circle">
+                      ${day.isActive ? '🔥' : '•'}
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Theme -->
         <div class="settings-section">
           <div class="settings-section-title">Giao diện</div>
