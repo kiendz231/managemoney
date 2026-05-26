@@ -96,21 +96,11 @@ export function renderDashboard(container) {
             <div class="stat-icon" style="background: var(--accent-subtle)">💎</div>
             <div class="stat-label">Số dư</div>
             <div class="stat-value">${formatCurrency(overallBalance)}</div>
-            <div class="stat-subtext-container">
-              <span class="stat-subtext-item">💵 Tiền mặt: <strong>${formatCurrency(cashBalance)}</strong></span>
-              <span class="stat-divider">|</span>
-              <span class="stat-subtext-item">💳 Tài khoản: <strong>${formatCurrency(bankBalance)}</strong></span>
-            </div>
           </div>
           <div class="stat-card" style="--stat-color: var(--warning)">
             <div class="stat-icon" style="background: var(--warning-subtle)">💳</div>
             <div class="stat-label">Trả góp tháng này</div>
             <div class="stat-value" style="color: var(--warning)">${formatCurrency(monthlyDue)}</div>
-            <div class="stat-subtext-container">
-              <span class="stat-subtext-item">💸 Trả góp còn: <strong>${formatCurrency(totalRemaining)}</strong></span>
-              <span class="stat-divider">|</span>
-              <span class="stat-subtext-item">🤝 Vay nợ ròng: <strong>${formatCurrency(netDebt)}</strong></span>
-            </div>
           </div>
         </div>
 
