@@ -1437,3 +1437,231 @@
     max-width: 100%;
   }
 }
+
+/* ---------- Daily Fire Streak Banner ---------- */
+.streak-banner {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: var(--space-lg);
+  padding: var(--space-md) var(--space-lg);
+  background: var(--bg-glass-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-lg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+.streak-banner.active {
+  background: linear-gradient(135deg, rgba(255, 107, 0, 0.08) 0%, rgba(255, 60, 0, 0.03) 100%);
+  border-color: rgba(255, 107, 0, 0.25);
+  box-shadow: 0 8px 32px 0 rgba(255, 107, 0, 0.06);
+}
+
+.streak-banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 10% 20%, rgba(255, 107, 0, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.streak-banner.active::before {
+  opacity: 1;
+}
+
+.streak-main {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.streak-fire-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  min-width: 60px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-light);
+}
+
+.streak-banner.active .streak-fire-wrapper {
+  background: rgba(255, 107, 0, 0.08);
+  border-color: rgba(255, 107, 0, 0.3);
+}
+
+.streak-fire-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 50%;
+  filter: blur(8px);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.streak-banner.active .streak-fire-glow {
+  opacity: 0.6;
+  background: radial-gradient(circle, rgba(255, 107, 0, 0.5) 0%, transparent 70%);
+}
+
+.streak-fire-icon {
+  font-size: 28px;
+  display: inline-block;
+  user-select: none;
+  transition: all 0.3s ease;
+}
+
+.streak-fire-icon.burning {
+  animation: flamePulse 2s infinite ease-in-out;
+  filter: drop-shadow(0 2px 8px rgba(255, 107, 0, 0.5));
+}
+
+.streak-fire-icon.cold {
+  filter: grayscale(100%) opacity(0.3);
+}
+
+.streak-count-value {
+  position: absolute;
+  bottom: -4px;
+  font-size: 10px;
+  font-weight: var(--fw-bold);
+  color: white;
+  background: linear-gradient(135deg, #FF8A00, #FF3D00);
+  padding: 1px 7px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 2px 6px rgba(255, 60, 0, 0.3);
+  letter-spacing: 0.5px;
+}
+
+.streak-banner.inactive .streak-count-value {
+  background: var(--text-tertiary);
+  box-shadow: none;
+  border-color: transparent;
+}
+
+.streak-details {
+  flex: 1;
+}
+
+.streak-title {
+  font-size: var(--fs-base);
+  font-weight: var(--fw-bold);
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.streak-message {
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+  line-height: 1.35;
+  margin: 0;
+}
+
+.streak-sub-info {
+  margin-top: 4px;
+  font-size: var(--fs-xs);
+  color: var(--text-tertiary);
+  display: flex;
+  gap: 12px;
+}
+
+.streak-weekly {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-left: 1px solid var(--border-light);
+  padding-left: var(--space-lg);
+}
+
+.streak-weekly-title {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  color: var(--text-tertiary);
+  margin-bottom: 8px;
+}
+
+.streak-days-list {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.streak-day-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.streak-day-label {
+  font-size: 9px;
+  color: var(--text-tertiary);
+  margin-bottom: 4px;
+  font-weight: var(--fw-medium);
+}
+
+.streak-day-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  color: var(--text-tertiary);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.streak-day-item.active .streak-day-circle {
+  background: linear-gradient(135deg, rgba(255, 107, 0, 0.25) 0%, rgba(255, 60, 0, 0.1) 100%);
+  border-color: rgba(255, 107, 0, 0.4);
+  font-size: 14px;
+  color: inherit;
+  box-shadow: 0 2px 8px rgba(255, 107, 0, 0.15);
+}
+
+.streak-day-item.today .streak-day-circle {
+  border-color: var(--accent);
+  box-shadow: 0 0 6px var(--accent-glow);
+}
+
+.streak-day-item.today.active .streak-day-circle {
+  border-color: #FF8A00;
+  box-shadow: 0 0 10px rgba(255, 107, 0, 0.3);
+}
+
+/* Responsive for Streak Banner */
+@media (max-width: 767px) {
+  .streak-banner {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+    padding: var(--space-md);
+  }
+
+  .streak-weekly {
+    border-left: none;
+    border-top: 1px solid var(--border-light);
+    padding-left: 0;
+    padding-top: var(--space-sm);
+    margin-top: 4px;
+  }
+}

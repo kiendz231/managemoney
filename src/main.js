@@ -7,7 +7,7 @@ import './styles/liquid-glass.css';
 
 import { createIcons, icons } from 'lucide';
 import { observeAuthState, signInWithEmail, signUpWithEmail, signInWithGoogle } from './auth.js';
-import { setUserId } from './store.js';
+import { setUserId, on, getStreakStatus } from './store.js';
 import { initModal } from './components/modal.js';
 import { showToast } from './components/toast.js';
 import { openTransactionForm } from './components/transaction-form.js';
@@ -58,6 +58,13 @@ function init() {
 
   // Setup FABs
   setupFABs();
+
+  // Listen for transactions to update global streaks
+  on('transactions', () => {
+    if (currentUser) {
+      updateGlobalStreaks();
+    }
+  });
 }
 
 // ---- Login Screen ----
@@ -77,6 +84,9 @@ function showMainApp(user) {
   document.getElementById('sidebar-username').textContent = name;
   document.getElementById('sidebar-email').textContent = user.email || '';
   document.getElementById('sidebar-avatar').textContent = name.charAt(0).toUpperCase();
+
+  // Update global streaks
+  updateGlobalStreaks();
 
   // Navigate to current page
   navigateTo(currentPage);
@@ -311,6 +321,42 @@ function setupFABs() {
 
   // Topbar add button
   document.getElementById('btn-add-transaction-topbar')?.addEventListener('click', () => openTransactionForm());
+}
+
+function updateGlobalStreaks() {
+  const streak = getStreakStatus();
+
+  // 1. Update Topbar indicator
+  const topbarActions = document.querySelector('.topbar-actions');
+  if (topbarActions) {
+    let topbarStreak = document.getElementById('topbar-streak');
+    if (!topbarStreak) {
+      topbarStreak = document.createElement('div');
+      topbarStreak.id = 'topbar-streak';
+      topbarStreak.className = 'topbar-streak';
+      topbarActions.insertBefore(topbarStreak, topbarActions.firstChild);
+    }
+
+    topbarStreak.className = `topbar-streak ${streak.isTodayActive ? 'active' : 'inactive'}`;
+    topbarStreak.innerHTML = `
+      <span class="streak-fire-icon ${streak.isTodayActive ? 'burning' : 'cold'}">🔥</span>
+      <span class="streak-count-text">${streak.currentStreak}</span>
+    `;
+  }
+
+  // 2. Update Sidebar user details
+  const sidebarUser = document.getElementById('sidebar-user-info');
+  if (sidebarUser) {
+    let sidebarStreak = document.getElementById('sidebar-streak');
+    if (!sidebarStreak) {
+      sidebarStreak = document.createElement('div');
+      sidebarStreak.id = 'sidebar-streak';
+      sidebarStreak.className = 'sidebar-streak';
+      sidebarUser.appendChild(sidebarStreak);
+    }
+    sidebarStreak.className = `sidebar-streak ${streak.isTodayActive ? 'active' : 'inactive'}`;
+    sidebarStreak.innerHTML = `🔥 <span>${streak.currentStreak} ngày</span>`;
+  }
 }
 
 // ---- Start ----

@@ -468,3 +468,99 @@ export function getMonthlyTrend(months) {
   }
   return result;
 }
+
+export function getStreakStatus() {
+  const txs = getTransactions();
+  if (txs.length === 0) {
+    return { currentStreak: 0, longestStreak: 0, isTodayActive: false, streakDays: [] };
+  }
+
+  const getLocalDateStr = (dateObj) => {
+    const y = dateObj.getFullYear();
+    const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const d = String(dateObj.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  };
+
+  const now = new Date();
+  const todayStr = getLocalDateStr(now);
+
+  const yesterday = new Date(now);
+  yesterday.setDate(yesterday.getDate() - 1);
+  const yesterdayStr = getLocalDateStr(yesterday);
+
+  // Tập hợp danh sách ngày duy nhất có giao dịch (sắp xếp tăng dần)
+  const uniqueDates = Array.from(
+    new Set(
+      txs.map(t => {
+        const d = t.date?.toDate ? t.date.toDate() : new Date(t.date);
+        return getLocalDateStr(d);
+      })
+    )
+  ).sort();
+
+  // Tính chuỗi hiện tại (currentStreak)
+  let currentStreak = 0;
+  const isTodayActive = uniqueDates.includes(todayStr);
+  const isYesterdayActive = uniqueDates.includes(yesterdayStr);
+
+  if (isTodayActive || isYesterdayActive) {
+    let checkDate = isTodayActive ? now : yesterday;
+    let checkStr = getLocalDateStr(checkDate);
+
+    while (uniqueDates.includes(checkStr)) {
+      currentStreak++;
+      const prev = new Date(checkDate);
+      prev.setDate(prev.getDate() - 1);
+      checkDate = prev;
+      checkStr = getLocalDateStr(checkDate);
+    }
+  }
+
+  // Tính chuỗi dài nhất lịch sử (longestStreak)
+  let longestStreak = 0;
+  if (uniqueDates.length > 0) {
+    let temp = 1;
+    longestStreak = 1;
+    for (let i = 1; i < uniqueDates.length; i++) {
+      const prevD = new Date(uniqueDates[i - 1]);
+      const currD = new Date(uniqueDates[i]);
+
+      const diffTime = Date.UTC(currD.getFullYear(), currD.getMonth(), currD.getDate()) -
+                       Date.UTC(prevD.getFullYear(), prevD.getMonth(), prevD.getDate());
+      const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+      if (diffDays === 1) {
+        temp++;
+      } else if (diffDays > 1) {
+        temp = 1;
+      }
+      if (temp > longestStreak) {
+        longestStreak = temp;
+      }
+    }
+  }
+
+  // Lấy trạng thái 7 ngày gần nhất (để vẽ lịch tuần)
+  const streakDays = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(now);
+    d.setDate(d.getDate() - i);
+    const dStr = getLocalDateStr(d);
+
+    const dayNames = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+    streakDays.push({
+      dayLabel: i === 0 ? 'H.nay' : dayNames[d.getDay()],
+      dateStr: dStr,
+      isActive: uniqueDates.includes(dStr),
+      isToday: i === 0
+    });
+  }
+
+  return {
+    currentStreak,
+    longestStreak,
+    isTodayActive,
+    streakDays
+  };
+}

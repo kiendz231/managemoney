@@ -1,5 +1,5 @@
 // Dashboard page
-import { getMonthSummary, getCategorySpending, getDailySpending, getTransactions, getCategories, on, getOverallBalance, getCashBalance, getBankBalance, getInstallments } from '../store.js';
+import { getMonthSummary, getCategorySpending, getDailySpending, getTransactions, getCategories, on, getOverallBalance, getCashBalance, getBankBalance, getInstallments, getStreakStatus } from '../store.js';
 import { formatCurrency, formatDateRelative, formatCompact } from '../utils/format.js';
 import { getCategoryById } from '../utils/categories.js';
 import { openTransactionForm } from '../components/transaction-form.js';
@@ -25,6 +25,7 @@ export function renderDashboard(container) {
     const transactions = getTransactions();
     const categories = getCategories();
     const recent = transactions.slice(0, 5);
+    const streak = getStreakStatus();
 
     // Compute installments stats
     const instList = getInstallments();
@@ -37,6 +38,41 @@ export function renderDashboard(container) {
 
     container.innerHTML = `
       <div class="page-enter">
+        <!-- Streak Banner -->
+        <div class="streak-banner ${streak.isTodayActive ? 'active' : 'inactive'}">
+          <div class="streak-main">
+            <div class="streak-fire-wrapper">
+              <div class="streak-fire-glow"></div>
+              <span class="streak-fire-icon ${streak.isTodayActive ? 'burning' : 'cold'}">🔥</span>
+              <span class="streak-count-value">${streak.currentStreak}</span>
+            </div>
+            <div class="streak-details">
+              <h3 class="streak-title">Chuỗi giữ lửa hàng ngày</h3>
+              <p class="streak-message">
+                ${streak.isTodayActive 
+                  ? 'Tuyệt vời! Bạn đã ghi chép giao dịch hôm nay để giữ lửa. Hãy tiếp tục nhé! 🎉' 
+                  : 'Hôm nay bạn chưa thêm giao dịch. Hãy thêm ngay 1 giao dịch để giữ lửa nhé! 💪'}
+              </p>
+              <div class="streak-sub-info">
+                <span>🏆 Kỷ lục: <strong>${streak.longestStreak} ngày</strong></span>
+              </div>
+            </div>
+          </div>
+          <div class="streak-weekly">
+            <div class="streak-weekly-title">Tiến độ 7 ngày qua</div>
+            <div class="streak-days-list">
+              ${streak.streakDays.map(day => `
+                <div class="streak-day-item ${day.isActive ? 'active' : ''} ${day.isToday ? 'today' : ''}">
+                  <span class="streak-day-label">${day.dayLabel}</span>
+                  <div class="streak-day-circle">
+                    ${day.isActive ? '🔥' : '•'}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+
         <!-- Stat Cards -->
         <div class="dashboard-stats">
           <div class="stat-card" style="--stat-color: var(--income)">
