@@ -7,11 +7,12 @@ import './styles/liquid-glass.css';
 
 import { createIcons, icons } from 'lucide';
 import { observeAuthState, signInWithEmail, signUpWithEmail, signInWithGoogle } from './auth.js';
-import { setUserId, on, getStreakStatus } from './store.js';
+import { setUserId, on, getStreakStatus, getCashBalance, getBankBalance } from './store.js';
 import { initModal } from './components/modal.js';
 import { showToast } from './components/toast.js';
 import { openTransactionForm } from './components/transaction-form.js';
 import { initLiquidGlass } from './components/liquid-glass.js';
+import { formatCurrency } from './utils/format.js';
 
 import { renderDashboard, destroyDashboard } from './pages/dashboard.js';
 import { renderTransactions, destroyTransactions } from './pages/transactions.js';
@@ -59,10 +60,18 @@ function init() {
   // Setup FABs
   setupFABs();
 
-  // Listen for transactions to update global streaks
+  // Listen for transactions to update global streaks and balances
   on('transactions', () => {
     if (currentUser) {
       updateGlobalStreaks();
+      updateSidebarBalances();
+    }
+  });
+
+  // Listen for user profile to update balances when initial balance changes
+  on('profile', () => {
+    if (currentUser) {
+      updateSidebarBalances();
     }
   });
 }
@@ -85,8 +94,9 @@ function showMainApp(user) {
   document.getElementById('sidebar-email').textContent = user.email || '';
   document.getElementById('sidebar-avatar').textContent = name.charAt(0).toUpperCase();
 
-  // Update global streaks
+  // Update global streaks and balances
   updateGlobalStreaks();
+  updateSidebarBalances();
 
   // Navigate to current page
   navigateTo(currentPage);
@@ -357,6 +367,17 @@ function updateGlobalStreaks() {
     sidebarStreak.className = `sidebar-streak ${streak.isTodayActive ? 'active' : 'inactive'}`;
     sidebarStreak.innerHTML = `🔥 <span>${streak.currentStreak} ngày</span>`;
   }
+}
+
+function updateSidebarBalances() {
+  const cash = getCashBalance();
+  const bank = getBankBalance();
+
+  const cashEl = document.getElementById('sidebar-balance-cash');
+  const bankEl = document.getElementById('sidebar-balance-bank');
+
+  if (cashEl) cashEl.textContent = formatCurrency(cash);
+  if (bankEl) bankEl.textContent = formatCurrency(bank);
 }
 
 // ---- Start ----
