@@ -25,6 +25,7 @@ let transactions = [];
 let categories = [...DEFAULT_CATEGORIES];
 let budgets = [];
 let installments = [];
+let debts = [];
 let userProfile = {};
 let listeners = {};
 
@@ -36,6 +37,7 @@ export function setUserId(uid) {
   categories = [...DEFAULT_CATEGORIES];
   budgets = [];
   installments = [];
+  debts = [];
   userProfile = {};
 
   currentUserId = uid;
@@ -62,6 +64,10 @@ function budgetsRef() {
 
 function installmentsRef() {
   return collection(db, 'users', currentUserId, 'installments');
+}
+
+function debtsRef() {
+  return collection(db, 'users', currentUserId, 'debts');
 }
 
 // ------ Subscribe to realtime updates ------
@@ -107,6 +113,13 @@ function subscribeToData() {
   });
   unsubscribers.push(unsubInstallments);
 
+  // Debts
+  const unsubDebts = onSnapshot(debtsRef(), (snapshot) => {
+    debts = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+    emit('debts');
+  });
+  unsubscribers.push(unsubDebts);
+
   // User profile
   const unsubProfile = onSnapshot(userRef(), (docSnap) => {
     if (docSnap.exists()) {
@@ -137,6 +150,7 @@ export function getTransactions() { return transactions; }
 export function getCategories() { return categories; }
 export function getBudgets() { return budgets; }
 export function getInstallments() { return installments; }
+export function getDebts() { return debts; }
 export function getUserProfile() { return userProfile; }
 
 // ------ Transaction CRUD ------
@@ -285,6 +299,66 @@ export async function payInstallmentTerm(id) {
     categoryId: inst.categoryId || 'bills',
     wallet: inst.wallet || 'bank',
     note: `Thanh toán trả góp: ${inst.name} (Kỳ ${newMonthsPaid}/${inst.monthsTotal})`,
+    date: new Date()
+  });
+}
+
+// ------ Debts CRUD ------
+export async function addDebt(data) {
+  const debtData = {
+    name: data.name || '',
+    amount: Number(data.amount) || 0,
+    type: data.type || 'lend', // 'lend' | 'borrow'
+    note: data.note || '',
+    date: data.date ? Timestamp.fromDate(new Date(data.date)) : Timestamp.now(),
+    dueDate: data.dueDate || '',
+    wallet: data.wallet || 'bank',
+    status: data.status || 'unpaid', // 'unpaid' | 'paid'
+    createdAt: Timestamp.now(),
+  };
+  return addDoc(debtsRef(), debtData);
+}
+
+export async function updateDebt(id, data) {
+  const updateData = {};
+  if (data.name !== undefined) updateData.name = data.name;
+  if (data.amount !== undefined) updateData.amount = Number(data.amount) || 0;
+  if (data.type !== undefined) updateData.type = data.type;
+  if (data.note !== undefined) updateData.note = data.note;
+  if (data.date !== undefined) {
+    updateData.date = Timestamp.fromDate(new Date(data.date));
+  }
+  if (data.dueDate !== undefined) updateData.dueDate = data.dueDate;
+  if (data.wallet !== undefined) updateData.wallet = data.wallet;
+  if (data.status !== undefined) updateData.status = data.status;
+  return updateDoc(doc(debtsRef(), id), updateData);
+}
+
+export async function deleteDebt(id) {
+  return deleteDoc(doc(debtsRef(), id));
+}
+
+export async function settleDebt(id) {
+  const debt = debts.find(d => d.id === id);
+  if (!debt) return;
+
+  // 1. Update status to 'paid'
+  await updateDoc(doc(debtsRef(), id), {
+    status: 'paid'
+  });
+
+  // 2. Automatically record corresponding transaction
+  const isLend = debt.type === 'lend';
+  const d = debt.date?.toDate ? debt.date.toDate() : new Date(debt.date);
+  
+  await addTransaction({
+    type: isLend ? 'income' : 'expense',
+    amount: debt.amount,
+    categoryId: isLend ? 'other_income' : 'other_expense',
+    wallet: debt.wallet || 'bank',
+    note: isLend 
+      ? `Thu nợ từ: ${debt.name} ${debt.note ? `- ${debt.note}` : ''}`
+      : `Trả nợ cho: ${debt.name} ${debt.note ? `- ${debt.note}` : ''}`,
     date: new Date()
   });
 }

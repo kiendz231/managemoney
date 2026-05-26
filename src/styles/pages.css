@@ -1331,3 +1331,109 @@
     display: none !important;
   }
 }
+
+/* ---------- Unified Vay & Nợ Page Tabs ---------- */
+.main-tabs-selector {
+  display: flex;
+  background: var(--bg-input);
+  border-radius: var(--radius-lg);
+  padding: 4px;
+  gap: 4px;
+  margin-bottom: var(--space-lg);
+  border: 1px solid var(--border-light);
+  max-width: 400px;
+}
+
+.main-tab-btn {
+  flex: 1;
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+  font-size: var(--fs-base);
+  font-weight: var(--fw-semibold);
+  color: var(--text-secondary);
+  transition: all var(--duration-normal) var(--ease-spring);
+  text-align: center;
+  cursor: pointer;
+}
+
+.main-tab-btn:hover {
+  color: var(--text-primary);
+}
+
+.main-tab-btn.active {
+  background: var(--accent);
+  color: white;
+  box-shadow: 0 4px 16px var(--accent-glow);
+}
+
+/* ---------- Debt Ledger Cards ---------- */
+.debt-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  transition: all var(--duration-normal) var(--ease-out);
+  position: relative;
+  overflow: hidden;
+}
+
+.debt-card.lend::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--income), #55EFC4);
+  opacity: 0.85;
+}
+
+.debt-card.borrow::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--expense), #FF8A5C);
+  opacity: 0.85;
+}
+
+.debt-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.debt-card.lend:hover {
+  border-color: hsla(155, 70%, 48%, 0.25);
+  box-shadow: 0 8px 24px var(--income-glow);
+}
+
+.debt-card.borrow:hover {
+  border-color: hsla(0, 72%, 58%, 0.2);
+  box-shadow: 0 8px 24px var(--expense-glow);
+}
+
+.settle-btn {
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 8px var(--accent-glow);
+}
+
+.settle-btn:hover {
+  transform: scale(1.04);
+  box-shadow: 0 4px 14px var(--accent-glow);
+}
+
+.settle-btn:active {
+  transform: scale(0.96);
+}
+
+@media (max-width: 767px) {
+  .main-tabs-selector {
+    max-width: 100%;
+  }
+}

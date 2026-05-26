@@ -181,7 +181,7 @@ function getAuthErrorMessage(code, err) {
 const pageTitles = {
   dashboard: 'Tổng quan',
   transactions: 'Giao dịch',
-  installments: 'Trả góp',
+  installments: 'Vay & Nợ',
   reports: 'Báo cáo',
   settings: 'Cài đặt',
 };
